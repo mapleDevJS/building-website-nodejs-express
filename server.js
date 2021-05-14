@@ -25,7 +25,20 @@ app.use(cookieSession({
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
 
+app.locals.siteName = 'ROUX Meetups';
+
 app.use(express.static(path.join(__dirname, './static')));
+
+// available for the whole application
+app.use(async (request, response, next) => {
+    try {
+        const names = await speakerService.getNames();
+        response.locals.speakerNames = names;
+        return next();
+    } catch (err) {
+        return next(err);
+    }
+});
 
 app.use('/', routes({feedbackService, speakerService}));
 
