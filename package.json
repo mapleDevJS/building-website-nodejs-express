@@ -1,0 +1,16 @@
+{
+  "name": "roux-academy",
+  "version": "1.0.0",
+  "description": "Exercise files for my course Building a Website with Node.js and Express",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "Alexey Ivanov",
+  "license": "MIT",
+  "devDependencies": {},
+  "dependencies": {
+    "express": "4.17.1"
+  }
+}
