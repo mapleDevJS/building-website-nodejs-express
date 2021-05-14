@@ -1,6 +1,7 @@
 const { response } = require('express');
 const express = require('express');
 const path = require('path');
+const cookieSession = require('cookie-session');
 
 const FeedbackService = require('./services/FeedbackService');
 const SpeakerService = require('./services/SpeakerService');
@@ -13,6 +14,13 @@ const routes = require('./routes');
 const app = express();
 
 const PORT = 3000;
+
+app.set('trust proxy', 1);
+
+app.use(cookieSession({
+    name: 'session',
+    keys: ['kshHKHf8hdkndk', 'kshdfkhHhfqjwpkpeurU'],
+}))
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
