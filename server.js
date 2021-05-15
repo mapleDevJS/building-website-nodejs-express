@@ -2,6 +2,7 @@ const express = require('express');
 const path = require('path');
 const cookieSession = require('cookie-session');
 const createError = require('http-errors');
+const bodyParser = require('body-parser');
 
 const FeedbackService = require('./services/FeedbackService');
 const SpeakerService = require('./services/SpeakerService');
@@ -20,7 +21,9 @@ app.set('trust proxy', 1);
 app.use(cookieSession({
     name: 'session',
     keys: ['kshHKHf8hdkndk', 'kshdfkhHhfqjwpkpeurU'],
-}))
+}));
+
+app.use(bodyParser.urlencoded({extended: true}));
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, './views'));
