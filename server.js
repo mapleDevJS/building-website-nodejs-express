@@ -1,4 +1,4 @@
-const { response } = require('express');
+const { response, request } = require('express');
 const express = require('express');
 const path = require('path');
 const cookieSession = require('cookie-session');
@@ -28,6 +28,12 @@ app.set('views', path.join(__dirname, './views'));
 app.locals.siteName = 'ROUX Meetups';
 
 app.use(express.static(path.join(__dirname, './static')));
+
+// app.get('/throw', (request, response, next) => {
+//     setTimeout(() => {
+//         return next(new Error('Something did throw'));
+//     }, 500);
+// });
 
 // available for the whole application
 app.use(async (request, response, next) => {
