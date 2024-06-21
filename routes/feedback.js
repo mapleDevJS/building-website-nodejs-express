@@ -1,5 +1,4 @@
 const express = require('express');
-
 const { check, validationResult } = require('express-validator');
 
 const router = express.Router();
@@ -14,63 +13,53 @@ const validations = [
 module.exports = (params) => {
   const { feedbackService } = params;
 
-  router.get('/', async (request, response, next) => {
+  const handleFeedback = async (req, res, next, isApi = false) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        const errorData = { errors: errors.array() };
+        if (isApi) {
+          return res.json(errorData);
+        }
+        req.session.feedback = errorData;
+        return res.redirect('/feedback');
+      }
+
+      const { name, email, title, message } = req.body;
+      await feedbackService.addEntry(name, email, title, message);
+
+      if (isApi) {
+        const feedback = await feedbackService.getList();
+        return res.json({ feedback, successMessage: 'Thank you for your feedback!' });
+      }
+
+      req.session.feedback = { message: 'Thank you for your feedback!' };
+      return res.redirect('/feedback');
+    } catch (err) {
+      return next(err);
+    }
+  };
+
+  router.get('/', async (req, res, next) => {
     try {
       const feedback = await feedbackService.getList();
+      const { feedback: feedbackSession } = req.session;
+      req.session.feedback = {};
 
-      const errors = request.session.feedback ? request.session.feedback.errors : false;
-      const successMessage = request.session.feedback ? request.session.feedback.message : false;
-
-      request.session.feedback = {};
-
-      return response.render('layout', {
+      return res.render('layout', {
         pageTitle: 'Feedback',
         template: 'feedback',
         feedback,
-        errors,
-        successMessage,
+        errors: feedbackSession?.errors || false,
+        successMessage: feedbackSession?.message || false,
       });
     } catch (err) {
       return next(err);
     }
   });
 
-  router.post('/', validations, async (request, response) => {
-    try {
-      const errors = validationResult(request);
-
-      if (!errors.isEmpty()) {
-        request.session.feedback = {
-          errors: errors.array(),
-        };
-        return response.redirect('/feedback');
-      }
-
-      const { name, email, title, message } = request.body;
-      await feedbackService.addEntry(name, email, title, message);
-      request.session.feedback = {
-        message: 'Thank you for your feedback!',
-      };
-      return response.redirect('/feedback');
-    } catch (err) {
-      return next(err);
-    }
-  });
-
-  router.post('/api', validations, async (request, response, next) => {
-    try {
-      const errors = validationResult(request);
-      if (!errors.isEmpty) {
-        return response.json({ errors: error.array() });
-      }
-      const { name, email, title, message } = request.body;
-      await feedbackService.addEntry(name, email, title, message);
-      const feedback = await feedbackService.getList();
-      return response.json({ feedback, successMessage: 'Thank you for your feedback!' });
-    } catch (err) {
-      return next(err);
-    }
-  });
+  router.post('/', validations, (req, res, next) => handleFeedback(req, res, next));
+  router.post('/api', validations, (req, res, next) => handleFeedback(req, res, next, true));
 
   return router;
 };
