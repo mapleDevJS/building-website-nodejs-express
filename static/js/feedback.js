@@ -1,50 +1,52 @@
 $(function feedback() {
+  const $feedbackStatus = $('.feedback-status');
+  const $feedbackForm = $('.feedback-form');
+  const $feedbackItems = $('.feedback-items');
+
   /**
-   * Updates the DOM
+   * Generates HTML for feedback items
+   * @param {Array} feedback Array of feedback items
+   * @returns {string} HTML string for feedback items
+   */
+  function generateFeedbackHtml(feedback) {
+    return feedback.map(item => `
+      <div class="feedback-item item-list media-list">
+        <div class="feedback-item media">
+          <div class="feedback-info media-body">
+            <div class="feedback-head">
+              <div class="feedback-title">${item.title}</div>
+              <small>by ${item.name}</small>
+            </div>
+            <div class="feedback-message">${item.message}</div>
+          </div>
+        </div>
+      </div>
+    `).join('\n');
+  }
+
+  /**
+   * Generates HTML for error messages
+   * @param {Array} errors Array of error messages
+   * @returns {string} HTML string for error messages
+   */
+  function generateErrorHtml(errors) {
+    return errors.map(error => `<li>${error.msg}</li>`).join('\n');
+  }
+
+  /**
+   * Renders feedback or error messages to the DOM
    * @param {*} data XHR result
    */
-  function updateFeedback(data) {
-    const render = [];
-    // Reset all status messages
-    $('.feedback-status').empty();
+  function renderFeedback(data) {
+    $feedbackStatus.empty();
 
-    // All went well
     if (!data.errors && data.feedback) {
-      // The input was valid - reset the form
-      $('.feedback-form').trigger('reset');
-
-      $.each(data.feedback, function createHtml(key, item) {
-        render.push(`
-          <div class="feedback-item item-list media-list">
-            <div class="feedback-item media">
-              <div class="feedback-info media-body">
-                <div class="feedback-head">
-                  <div class="feedback-title">${item.title}</div>
-                  <small>by ${item.name}</small>
-                </div>
-                <div class="feedback-message">
-                  ${item.message}
-                </div>
-              </div>
-            </div>
-          </div>
-        `);
-      });
-      // Update feedback-items with what the REST API returned
-      $('.feedback-items').html(render.join('\n'));
-      // Output the success message
-      $('.feedback-status').html(`<div class="alert alert-success">${data.successMessage}</div>`);
-    } else {
-      // There was an error
-      // Create a list of errors
-      $.each(data.errors, function createHtml(key, error) {
-        render.push(`
-          <li>${error.msg}</li>
-        `);
-      });
-      // Set the status message
-      $('.feedback-status').html(
-        `<div class="alert alert-danger"><ul>${render.join('\n')}</ul></div>`
+      $feedbackForm.trigger('reset');
+      $feedbackItems.html(generateFeedbackHtml(data.feedback));
+      $feedbackStatus.html(`<div class="alert alert-success">${data.successMessage}</div>`);
+    } else if (data.errors) {
+      $feedbackStatus.html(
+        `<div class="alert alert-danger"><ul>${generateErrorHtml(data.errors)}</ul></div>`
       );
     }
   }
@@ -52,22 +54,17 @@ $(function feedback() {
   /**
    * Attaches to the form and sends the data to our REST endpoint
    */
-  $('.feedback-form').submit(function submitFeedback(e) {
-    // Prevent the default submit form event
+  $feedbackForm.submit(function submitFeedback(e) {
     e.preventDefault();
-
-    // XHR POST request
     $.post(
       '/feedback/api',
-      // Gather all data from the form and create a JSON object from it
       {
         name: $('#feedback-form-name').val(),
         email: $('#feedback-form-email').val(),
         title: $('#feedback-form-title').val(),
         message: $('#feedback-form-message').val(),
       },
-      // Callback to be called with the data
-      updateFeedback
+      renderFeedback
     );
   });
 });
