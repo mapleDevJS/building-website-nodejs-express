@@ -9,7 +9,9 @@ $(function feedback() {
    * @returns {string} HTML string for feedback items
    */
   function generateFeedbackHtml(feedback) {
-    return feedback.map(item => `
+    return feedback
+      .map(
+        (item) => `
       <div class="feedback-item item-list media-list">
         <div class="feedback-item media">
           <div class="feedback-info media-body">
@@ -21,7 +23,9 @@ $(function feedback() {
           </div>
         </div>
       </div>
-    `).join('\n');
+    `
+      )
+      .join('\n');
   }
 
   /**
@@ -30,7 +34,7 @@ $(function feedback() {
    * @returns {string} HTML string for error messages
    */
   function generateErrorHtml(errors) {
-    return errors.map(error => `<li>${error.msg}</li>`).join('\n');
+    return errors.map((error) => `<li>${error.msg}</li>`).join('\n');
   }
 
   /**

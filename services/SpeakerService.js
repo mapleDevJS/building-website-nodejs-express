@@ -14,7 +14,7 @@ class SpeakerService {
 
   async getAllArtwork() {
     const data = await this.getData();
-    return data.reduce((acc, { artwork }) => artwork ? [...acc, ...artwork] : acc, []);
+    return data.reduce((acc, { artwork }) => (artwork ? [...acc, ...artwork] : acc), []);
   }
 
   async getArtworkForSpeaker(shortname) {
@@ -41,7 +41,7 @@ class SpeakerService {
 
   async findSpeaker(shortname) {
     const data = await this.getData();
-    return data.find(speaker => speaker.shortname === shortname);
+    return data.find((speaker) => speaker.shortname === shortname);
   }
 
   async getData() {
