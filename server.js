@@ -3,53 +3,56 @@ const path = require('path');
 const cookieSession = require('cookie-session');
 const createError = require('http-errors');
 const bodyParser = require('body-parser');
-
 const FeedbackService = require('./services/FeedbackService');
 const SpeakerService = require('./services/SpeakerService');
-
-const feedbackService = new FeedbackService('./data/feedback.json');
-const speakerService = new SpeakerService('./data/speakers.json');
-
 const routes = require('./routes');
 
 const app = express();
-
 const PORT = 3000;
+const TRUST_PROXY_SETTING = 1;
+const SESSION_NAME = 'session';
+const SESSION_KEYS = ['kshHKHf8hdkndk', 'kshdfkhHhfqjwpkpeurU'];
+const VIEWS_PATH = path.join(__dirname, './views');
+const STATIC_PATH = path.join(__dirname, './static');
 
-app.set('trust proxy', 1);
+// Services
+const feedbackService = new FeedbackService('./data/feedback.json');
+const speakerService = new SpeakerService('./data/speakers.json');
 
+// Config settings
+app.set('trust proxy', TRUST_PROXY_SETTING);
+app.set('view engine', 'ejs');
+app.set('views', VIEWS_PATH);
+
+// Middlewares
 app.use(cookieSession({
-    name: 'session',
-    keys: ['kshHKHf8hdkndk', 'kshdfkhHhfqjwpkpeurU'],
+    name: SESSION_NAME,
+    keys: SESSION_KEYS,
 }));
-
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
-
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, './views'));
-
+app.use(express.static(STATIC_PATH));
 app.locals.siteName = 'ROUX Meetups';
 
-app.use(express.static(path.join(__dirname, './static')));
-
-// available for the whole application
-app.use(async (request, response, next) => {
+// Async middleware
+async function setSpeakerNames(request, response, next) {
     try {
         const names = await speakerService.getNames();
         response.locals.speakerNames = names;
-        return next();
+        next();
     } catch (err) {
-        return next(err);
+        next(err);
     }
-});
+}
+app.use(setSpeakerNames);
 
+// Main routes
 app.use('/', routes({feedbackService, speakerService}));
 
+// Error handling
 app.use((request, response, next) => {
-    return next(createError(404, 'File not found'));
+    next(createError(404, 'File not found'));
 });
-
 app.use((err, request, response, next) => {
     response.locals.message = err.message;
     console.log(err);
@@ -59,6 +62,7 @@ app.use((err, request, response, next) => {
     response.render('error');
 });
 
+// Server startup
 app.listen(PORT, () => {
     console.log(`Express server listening on port ${PORT}!`);
 });
