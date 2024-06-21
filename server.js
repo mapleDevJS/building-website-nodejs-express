@@ -39,8 +39,7 @@ app.locals.siteName = 'ROUX Meetups';
 // Async middleware
 async function setSpeakerNames(request, response, next) {
   try {
-    const names = await speakerService.getNames();
-    response.locals.speakerNames = names;
+    response.locals.speakerNames = await speakerService.getNames();
     next();
   } catch (err) {
     next(err);
@@ -55,7 +54,7 @@ app.use('/', routes({ feedbackService, speakerService }));
 app.use((request, response, next) => {
   next(createError(404, 'File not found'));
 });
-app.use((err, request, response, next) => {
+app.use((err, request, response) => {
   response.locals.message = err.message;
   console.log(err);
   const status = err.status || 500;
