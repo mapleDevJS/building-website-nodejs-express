@@ -12,8 +12,13 @@ module.exports = (params) => {
     try {
       const artwork = await speakerService.getAllArtwork();
       const topSpeakers = await speakerService.getList();
-      return response.render('layout', { pageTitle: 'Welcome', template: 'index', topSpeakers, artwork });
-    } catch(err) {
+      return response.render('layout', {
+        pageTitle: 'Welcome',
+        template: 'index',
+        topSpeakers,
+        artwork,
+      });
+    } catch (err) {
       return next(err);
     }
   });

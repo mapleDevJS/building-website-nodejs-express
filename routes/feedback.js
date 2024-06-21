@@ -61,13 +61,13 @@ module.exports = (params) => {
     try {
       const errors = validationResult(request);
       if (!errors.isEmpty) {
-        return response.json({errors: error.array()});
+        return response.json({ errors: error.array() });
       }
       const { name, email, title, message } = request.body;
       await feedbackService.addEntry(name, email, title, message);
       const feedback = await feedbackService.getList();
-      return response.json({feedback, successMessage: 'Thank you for your feedback!'});
-    } catch(err) {
+      return response.json({ feedback, successMessage: 'Thank you for your feedback!' });
+    } catch (err) {
       return next(err);
     }
   });

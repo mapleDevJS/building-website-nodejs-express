@@ -9,11 +9,15 @@ module.exports = (params) => {
     try {
       const artwork = await speakerService.getAllArtwork();
       const speakers = await speakerService.getList();
-      return response.render('layout', { pageTitle: 'Speakers', template: 'speakers', speakers, artwork });
-    } catch(err) {
+      return response.render('layout', {
+        pageTitle: 'Speakers',
+        template: 'speakers',
+        speakers,
+        artwork,
+      });
+    } catch (err) {
       return next(err);
     }
-    
   });
 
   router.get('/:shortname', async (request, response, next) => {
@@ -26,11 +30,9 @@ module.exports = (params) => {
         speaker,
         artwork,
       });
-    } catch(err) {
+    } catch (err) {
       return next(err);
     }
-
-    
   });
 
   return router;

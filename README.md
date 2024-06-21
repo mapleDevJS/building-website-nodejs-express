@@ -1,4 +1,5 @@
 # Learning objectives
+
 - Creating a basic Express.js application
 - Serving HTML pages and static content
 - Creating routes

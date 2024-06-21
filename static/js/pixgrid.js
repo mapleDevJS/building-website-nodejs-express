@@ -1,13 +1,13 @@
-const pixGrid = (function() {
+const pixGrid = (function () {
   function centerImage(theImage) {
     let myDifX = (window.innerWidth - theImage.width) / 2;
-            var myDifY = (window.innerHeight - theImage.height) / 2;
-    return (theImage.style.top = `${myDifY  }px`), (theImage.style.left = `${myDifX  }px`), theImage;
+    var myDifY = (window.innerHeight - theImage.height) / 2;
+    return (theImage.style.top = `${myDifY}px`), (theImage.style.left = `${myDifX}px`), theImage;
   }
   let myNode = document.querySelector('.pixgrid');
   myNode.addEventListener(
     'click',
-    function(e) {
+    function (e) {
       if (e.target.tagName === 'IMG') {
         let myOverlay = document.createElement('div');
         (myOverlay.id = 'overlay'),
@@ -16,17 +16,17 @@ const pixGrid = (function() {
           (myOverlay.style.top = 0),
           (myOverlay.style.backgroundColor = 'rgba(0,0,0,0.7)'),
           (myOverlay.style.cursor = 'pointer'),
-          (myOverlay.style.width = `${window.innerWidth  }px`),
-          (myOverlay.style.height = `${window.innerHeight  }px`),
-          (myOverlay.style.top = `${window.pageYOffset  }px`),
-          (myOverlay.style.left = `${window.pageXOffset  }px`);
+          (myOverlay.style.width = `${window.innerWidth}px`),
+          (myOverlay.style.height = `${window.innerHeight}px`),
+          (myOverlay.style.top = `${window.pageYOffset}px`),
+          (myOverlay.style.left = `${window.pageXOffset}px`);
         let imageSrc = e.target.src;
-                    var largeImage = document.createElement('img');
+        var largeImage = document.createElement('img');
         (largeImage.id = 'largeImage'),
-          (largeImage.src = `${imageSrc.substr(0, imageSrc.length - 7)  }.jpg`),
+          (largeImage.src = `${imageSrc.substr(0, imageSrc.length - 7)}.jpg`),
           (largeImage.style.display = 'block'),
           (largeImage.style.position = 'absolute'),
-          largeImage.addEventListener('load', function() {
+          largeImage.addEventListener('load', function () {
             this.height > window.innerHeight &&
               ((this.ratio = window.innerHeight / this.height),
               (this.height = this.height * this.ratio),
@@ -40,7 +40,7 @@ const pixGrid = (function() {
           }),
           largeImage.addEventListener(
             'click',
-            function() {
+            function () {
               myOverlay &&
                 (window.removeEventListener('resize', window, !1),
                 window.removeEventListener('scroll', window, !1),
@@ -50,21 +50,21 @@ const pixGrid = (function() {
           ),
           window.addEventListener(
             'scroll',
-            function() {
+            function () {
               myOverlay &&
-                ((myOverlay.style.top = `${window.pageYOffset  }px`),
-                (myOverlay.style.left = `${window.pageXOffset  }px`));
+                ((myOverlay.style.top = `${window.pageYOffset}px`),
+                (myOverlay.style.left = `${window.pageXOffset}px`));
             },
             !1
           ),
           window.addEventListener(
             'resize',
-            function() {
+            function () {
               myOverlay &&
-                ((myOverlay.style.width = `${window.innerWidth  }px`),
-                (myOverlay.style.height = `${window.innerHeight  }px`),
-                (myOverlay.style.top = `${window.pageYOffset  }px`),
-                (myOverlay.style.left = `${window.pageXOffset  }px`),
+                ((myOverlay.style.width = `${window.innerWidth}px`),
+                (myOverlay.style.height = `${window.innerHeight}px`),
+                (myOverlay.style.top = `${window.pageYOffset}px`),
+                (myOverlay.style.left = `${window.pageXOffset}px`),
                 centerImage(largeImage));
             },
             !1

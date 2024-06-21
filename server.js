@@ -25,44 +25,46 @@ app.set('view engine', 'ejs');
 app.set('views', VIEWS_PATH);
 
 // Middlewares
-app.use(cookieSession({
+app.use(
+  cookieSession({
     name: SESSION_NAME,
     keys: SESSION_KEYS,
-}));
-app.use(bodyParser.urlencoded({extended: true}));
+  })
+);
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(STATIC_PATH));
 app.locals.siteName = 'ROUX Meetups';
 
 // Async middleware
 async function setSpeakerNames(request, response, next) {
-    try {
-        const names = await speakerService.getNames();
-        response.locals.speakerNames = names;
-        next();
-    } catch (err) {
-        next(err);
-    }
+  try {
+    const names = await speakerService.getNames();
+    response.locals.speakerNames = names;
+    next();
+  } catch (err) {
+    next(err);
+  }
 }
 app.use(setSpeakerNames);
 
 // Main routes
-app.use('/', routes({feedbackService, speakerService}));
+app.use('/', routes({ feedbackService, speakerService }));
 
 // Error handling
 app.use((request, response, next) => {
-    next(createError(404, 'File not found'));
+  next(createError(404, 'File not found'));
 });
 app.use((err, request, response, next) => {
-    response.locals.message = err.message;
-    console.log(err);
-    const status = err.status || 500;
-    response.locals.status = status;
-    response.status(status);
-    response.render('error');
+  response.locals.message = err.message;
+  console.log(err);
+  const status = err.status || 500;
+  response.locals.status = status;
+  response.status(status);
+  response.render('error');
 });
 
 // Server startup
 app.listen(PORT, () => {
-    console.log(`Express server listening on port ${PORT}!`);
+  console.log(`Express server listening on port ${PORT}!`);
 });
