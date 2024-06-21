@@ -11,7 +11,7 @@ const app = express();
 const PORT = 3000;
 const TRUST_PROXY_SETTING = 1;
 const SESSION_NAME = 'session';
-const SESSION_KEYS = ['kshHKHf8hdkndk', 'kshdfkhHhfqjwpkpeurU'];
+const SESSION_KEYS = [process.env.SESSION_KEY1, process.env.SESSION_KEY2];
 const VIEWS_PATH = path.join(__dirname, './views');
 const STATIC_PATH = path.join(__dirname, './static');
 
