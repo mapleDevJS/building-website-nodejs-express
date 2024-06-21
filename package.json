@@ -19,6 +19,9 @@
     "nodemon": "2.0.22",
     "prettier": "2.3.0"
   },
+  "engines": {
+    "node": "20.15.0"
+  },
   "dependencies": {
     "body-parser": "1.20.1",
     "cookie-session": "1.4.0",
